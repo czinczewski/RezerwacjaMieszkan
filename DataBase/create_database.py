@@ -1,9 +1,6 @@
 import sqlite3 as sql
 print("SQLite version: ", sql.version, "\n")
 
-db = sql.connect('./database.db')
-coursor = db.cursor()
-
 # --------------------------------------------------------
 def create_db():
     coursor.execute('''CREATE TABLE IF NOT EXISTS client
@@ -41,17 +38,17 @@ def create_db():
                         id_client INTEGER REFERENCES client(id_client),
                         start_date TEXT,
                         end_date TEXT)''')
-    print("Table RENT created successfully")
-    print("\n")
+    print("Table RENT created successfully \n")
     db.commit()
+
 
 # --------------------------------------------------------
 def insert_data():
-    clients = [('andrzej123',   'Andrzej',  'Dobrowolski',  'AAA 305462', '1234123412341234'),
-               ('slodkajola',   'Joanna',   'Plichta',      'ABC 658942', '1235123512351235'),
-               ('kubon',        'Jakub',    'Turewicz',     'FDA 652374', '4567456745674895'),
-               ('rudy',         'Janusz',   'Cebula',       'CEB 154621', '5641523647895245'),
-               ('karolix',      'Karol',    'Sobisz',       'GHB 564895', '5123486432165494')]
+    clients = [('andrzej123', 'Andrzej', 'Dobrowolski', 'AAA 305462', '1234123412341234'),
+               ('slodkajola', 'Joanna', 'Plichta', 'ABC 658942', '1235123512351235'),
+               ('kubon', 'Jakub', 'Turewicz', 'FDA 652374', '4567456745674895'),
+               ('rudy', 'Janusz', 'Cebula', 'CEB 154621', '5641523647895245'),
+               ('karolix', 'Karol', 'Sobisz', 'GHB 564895', '5123486432165494')]
     coursor.executemany('''INSERT INTO client(nickname, name, surname, id_number, card_number)
                             VALUES (?, ?, ?, ?, ?)''', (clients))
 
@@ -61,19 +58,24 @@ def insert_data():
             ('Tokyo', '132-4315')]
     coursor.executemany('''INSERT INTO city(name, zip_code) VALUES (?, ?)''', (city))
 
-    flats = [('YES', '2017-03-21', '2017-08-20',     120,    2,  4,  'YES',  'YES',  'YES',  1),
-            ('YES', '2017-03-21', '2017-08-20',     100,    2,  3,  'YES',  'YES',  'NO',   2),
-            ('YES', '2017-03-21', '2017-08-20',      30,    1,  2,  'NO',   'NO',   'NO',   1),
-            ('NO',  '2017-03-21', '2017-08-20',      45,    1,  2,  'YES',  'YES',  'NO',   0),
-            ('YES', '2017-03-21', '2017-08-20',      36,    1,  2,  'NO',   'YES',  'NO',   0),
-            ('YES', '2017-03-21', '2017-08-20',     135,    3,  7,  'YES',  'YES',  'YES',  2),
-            ('NO',  '2017-03-21', '2017-08-20',     500,    6,  8,  'NO',   'NO',   'YES',  3)]
+    flats = [('YES', '2017-03-21', '2017-08-20', 120, 2, 4, 'YES', 'YES', 'YES', 1),
+             ('YES', '2017-03-21', '2017-08-20', 100, 2, 3, 'YES', 'YES', 'NO', 2),
+             ('YES', '2017-03-21', '2017-08-20', 30, 1, 2, 'NO', 'NO', 'NO', 1),
+             ('NO', '2017-03-21', '2017-08-20', 45, 1, 2, 'YES', 'YES', 'NO', 0),
+             ('YES', '2017-03-21', '2017-08-20', 36, 1, 2, 'NO', 'YES', 'NO', 0),
+             ('YES', '2017-03-21', '2017-08-20', 135, 3, 7, 'YES', 'YES', 'YES', 2),
+             ('NO', '2017-03-21', '2017-08-20', 500, 6, 8, 'NO', 'NO', 'YES', 3)]
     coursor.executemany('''INSERT INTO flat(availability, start_date, end_date,
                             price, number_of_rooms, amount_of_people, animals,
                             childs, parking_space, id_city)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (flats))
 
-
+    rents = [(5, 4, "2017-03-22", "2017-03-30"),
+             (1, 1, "2017-03-22", "2017-03-30"),
+             (5, 2, "2017-04-01", "2017-04-8"),
+             (13, 10, "2017-06-10", "2017-06-22")]
+    coursor.executemany('''INSERT INTO rent(id_flat, id_client, start_date, end_date)
+                        VALUES (?, ?, ?, ?)''', (rents))
 
     db.commit()
 
@@ -81,32 +83,40 @@ def insert_data():
 # --------------------------------------------------------
 def show_data():
     coursor.execute("SELECT * FROM client")
-    print(" ID_CLIENT |    NICKNAME  |        NAME |              SURNAME |  ID_NUMBER |      CARD_NUMBER |")
+    print("\n ID_CLIENT |    NICKNAME  |        NAME |              SURNAME |",
+          " ID_NUMBER |      CARD_NUMBER |")
     for row in coursor:
-        print('{:>10}'.format(row[0]), "|", '{:>12}'.format(row[1]), "|", '{:>11}'.format(row[2]), "|", '{:>20}'.format(row[3]), "|", '{:>10}'.format(row[4]), "|", '{:>16}'.format(row[5]), "|")
-
-    print("\n")
+        print('{:>10}'.format(row[0]), "|", '{:>12}'.format(row[1]), "|", '{:>11}'.format(row[2]), "|",
+              '{:>20}'.format(row[3]), "|", '{:>10}'.format(row[4]), "|", '{:>16}'.format(row[5]), "|")
 
     coursor.execute("SELECT * FROM city")
-    print(" ID_CITY |       NAME |   ZIP_CODE |")
+    print("\n ID_CITY |       NAME |   ZIP_CODE |")
     for row in coursor:
         print('{:>8}'.format(row[0]), "|", '{:>10}'.format(row[1]), "|", '{:>10}'.format(row[2]), "|")
 
+    coursor.execute("SELECT * FROM flat ORDER BY id_city")
+    print("\n ID_FLAT | AVAILABILITY |  START_DATE |    END_DATE |   PRICE | NUMBER_OF_ROOMS",
+          "| AMOUNT_OF_PEOPLE | ANIMALS | CHILDS | PARKING_SPACE | ID_CITY |")
+    for row in coursor:
+        print('{:>8}'.format(row[0]), "|", '{:>12}'.format(row[1]), "|", '{:>11}'.format(row[2]), "|",
+              '{:>11}'.format(row[3]), "|", '{:>7}'.format(row[4]), "|", '{:>15}'.format(row[5]), "|",
+              '{:>16}'.format(row[6]), "|", '{:>7}'.format(row[7]), "|", '{:>6}'.format(row[8]), "|",
+              '{:>13}'.format(row[9]), "|", '{:>7}'.format(row[10]), "|")
 
-    # print(coursor.fetchall())
+    coursor.execute("SELECT * FROM rent")
+    print("\n ID_RENT | ID_FLAT | ID_CLIENT |  START_DATE |    END_DATE |")
+    for row in coursor:
+        print('{:>8}'.format(row[0]), "|", '{:>7}'.format(row[1]), "|", '{:>9}'.format(row[2]), "|",
+              '{:>11}'.format(row[3]), "|", '{:>11}'.format(row[3]), "|")
 
 
 # --------------------------------------------------------
-# def data_entry(data):
-#     print("Dodaje dane")
-#     coursor.execute("INSERT INTO try VALUES(1545564, '2016-01-01', 'Python', 5)")
-#     db.commit()
-#     coursor.close()
-#     db.close()
-# --------------------------------------------------------
+db = sql.connect('./database.db')
+print("Connected :)")
+coursor = db.cursor()
 
-create_db()
-insert_data()
+# create_db()
+# insert_data()
 show_data()
 
 coursor.close()
