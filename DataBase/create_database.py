@@ -115,8 +115,8 @@ db = sql.connect('./database.db')
 print("Connected :)")
 coursor = db.cursor()
 
-# create_db()
-# insert_data()
+create_db()
+insert_data()
 show_data()
 
 coursor.close()

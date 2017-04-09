@@ -1,7 +1,6 @@
 # Aplikacja pozwalająca Adminowi na zmiany i edycje danych bez znajomości struktury danych
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTableWidget, QMessageBox, \
-    QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTableWidget, QMessageBox, QTableWidgetItem
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 # --------------------------------------------------------
@@ -21,11 +20,12 @@ class App(QWidget):
         self.move(10, 10)
         self.resize(820, 500)
 
+        self.db.setDatabaseName("./DataBase/database.db")
+
         self.set_labels()
         self.set_buttons()
         self.table.close()
         self.choose_table()
-        self.db.setDatabaseName("./DataBase/database.db")
         self.table.itemChanged.connect(self.updating)
 
     def set_labels(self):
@@ -45,7 +45,8 @@ class App(QWidget):
     def show_table(self):
         self.table.move(10, 40)
         self.table.resize(800, 300)
-        if not self.db.open():
+        ok = self.db.open()
+        if not ok:
             QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
             return False
         else:
@@ -179,6 +180,8 @@ class App(QWidget):
                     QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
         self.db.close()
         return True
+
+
 # --------------------------------------------------------
 if __name__ == '__main__':
     app = QApplication(sys.argv)
