@@ -12,6 +12,7 @@ class App(QWidget):
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.label1 = QLabel(self)
         self.button1 = QPushButton("Show", self)
+        self.button2 = QPushButton("Delete", self)
         self.cb = QComboBox(self)
         self.initUI()
 
@@ -34,12 +35,16 @@ class App(QWidget):
     def set_buttons(self):
         self.button1.move(150, 8)
         self.button1.clicked.connect(self.show_table)
+        self.button2.move(10, 350)
+        self.button2.clicked.connect(self.deleting)
 
     def choose_table(self):
         self.cb.move(90, 10)
         self.cb.addItems(["city", "client", "flat", "rent"])
 
     def show_table(self):
+        self.table.move(10, 40)
+        self.table.resize(800, 300)
         if not self.db.open():
             QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
             return False
@@ -102,8 +107,6 @@ class App(QWidget):
                 row = row + 1
 
             self.table.show()
-            self.table.move(10, 40)
-            self.table.resize(800, 300)
         self.db.close()
         return True
 
@@ -142,7 +145,40 @@ class App(QWidget):
         self.db.close()
         return True
 
+    def deleting(self):
+        ok = self.db.open()
+        if not ok:
+            QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
+            return False
+        else:
+            rows = self.table.selectionModel().selectedRows()
+            index = []
 
+            if self.cb.currentText() == "city":
+                column = "id_city"
+            if self.cb.currentText() == "client":
+                column = "id_client"
+            if self.cb.currentText() == "flat":
+                column = "id_flat"
+            if self.cb.currentText() == "rent":
+                column = "id_rent"
+
+            for i in rows:
+                index.append(i.row())
+            index.sort(reverse = True)
+
+            for i in index:
+                id = self.table.item(i, 0).text()
+                self.table.removeRow(i)
+                question = "DELETE FROM " + self.cb.currentText() + " WHERE " + column + " = " + id
+                print(question)
+                query = QSqlQuery()
+                query.prepare(question)
+                ok = query.exec_()
+                if not ok:
+                    QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
+        self.db.close()
+        return True
 # --------------------------------------------------------
 if __name__ == '__main__':
     app = QApplication(sys.argv)
