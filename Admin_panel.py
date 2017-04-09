@@ -1,8 +1,8 @@
 # Aplikacja pozwalająca Adminowi na zmiany i edycje danych bez znajomości struktury danych
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTableWidget, QMessageBox, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QComboBox, QTableWidget, QMessageBox, \
+    QTableWidgetItem
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
-
 
 # --------------------------------------------------------
 class App(QWidget):
@@ -25,7 +25,7 @@ class App(QWidget):
         self.table.close()
         self.choose_table()
         self.db.setDatabaseName("./DataBase/database.db")
-        self.show()
+        self.table.itemChanged.connect(self.updating)
 
     def set_labels(self):
         self.label1.move(14, 14)
@@ -41,12 +41,7 @@ class App(QWidget):
 
     def show_table(self):
         if not self.db.open():
-            QMessageBox.critical(None, "Cannot open database",
-                                 "Unable to establish a database connection.\n"
-                                 "This example needs SQLite support. Please read the Qt SQL "
-                                 "driver documentation for information how to build it.\n\n"
-                                 "Click Cancel to exit.",
-                                 QMessageBox.Cancel)
+            QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
             return False
         else:
             x = 0
@@ -57,25 +52,23 @@ class App(QWidget):
                 self.table.setColumnCount(3)
                 x = 3
                 self.table.setHorizontalHeaderLabels(["ID_CITY", "NAME", "ZIP_CODE"])
-                row = 0
             if self.cb.currentText() == "client":
                 self.table.setColumnCount(6)
                 x = 6
-                self.table.setHorizontalHeaderLabels(["ID_CLIENT", "NICKNAME", "NAME", "SURNAME", "ID_NUMBER", "CARD_NUMBER"])
-                row = 0
+                self.table.setHorizontalHeaderLabels(
+                    ["ID_CLIENT", "NICKNAME", "NAME", "SURNAME", "ID_NUMBER", "CARD_NUMBER"])
             if self.cb.currentText() == "flat":
                 self.table.setColumnCount(11)
                 x = 11
                 self.table.setHorizontalHeaderLabels(["ID_FLAT", "AVAILABILITY", "START_DATE", "END_DATE", "PRICE",
                                                       "NUMBER_OF_ROOMS", "AMOUNT_OF_PEOPLE", "ANIMALS", "CHILDS",
                                                       "PARKING_SPACE", "ID_CITY"])
-                row = 0
             if self.cb.currentText() == "rent":
                 self.table.setColumnCount(5)
                 x = 5
-                self.table.setHorizontalHeaderLabels(["ID_CITY", "NAME", "ZIP_CODE"])
-                row = 0
+                self.table.setHorizontalHeaderLabels(["ID_RENT", "ID_FLAT", "ID_CLIENT", "START_DATE", "END_DATE"])
 
+            row = 0
             query = QSqlQuery(question)
             while query.next():
                 self.table.insertRow(row)
@@ -111,6 +104,42 @@ class App(QWidget):
             self.table.show()
             self.table.move(10, 40)
             self.table.resize(800, 300)
+        self.db.close()
+        return True
+
+    def updating(self):
+        ok = self.db.open()
+        if not ok:
+            QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
+            return False
+        else:
+            column = self.table.currentColumn()
+            row = self.table.currentRow()
+            if column < 0 or row < 0:
+                return False
+
+            id = self.table.item(row, 0).text()
+            value = self.table.currentItem().text()
+
+            if self.cb.currentText() == "city":
+                columns = ["id_city", "name", "zip_code"]
+            if self.cb.currentText() == "client":
+                columns = ["id_client", "nickname", "name", "surname", "id_number", "card_number"]
+            if self.cb.currentText() == "flat":
+                columns = ["id_flat", "availability", "start_date", "end_date", "price", "number_of_rooms",
+                           "amount_of_people", "animals", "childs", "parking_space", "id_city"]
+            if self.cb.currentText() == "rent":
+                columns = ["id_rent", "id_flat", "id_client", "start_date", "end_date"]
+
+            query = QSqlQuery()
+            question = "UPDATE " + self.cb.currentText() + " SET " + columns[column] + " = '" + value +"' WHERE " + columns[0] + " = " + id
+            print(question)
+            query.prepare(question)
+            ok = query.exec_()
+            if not ok:
+                QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
+        self.db.commit()
+        self.db.close()
         return True
 
 
@@ -118,4 +147,5 @@ class App(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
+    ex.show()
     sys.exit(app.exec_())
