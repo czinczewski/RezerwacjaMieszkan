@@ -10,9 +10,13 @@ class App(QWidget):
         self.table = QTableWidget(self)
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.label1 = QLabel(self)
+        self.label2 = QLabel(self)
         self.button1 = QPushButton("Show", self)
         self.button2 = QPushButton("Delete", self)
-        self.cb = QComboBox(self)
+        self.button3 = QPushButton("Start Editing", self)
+        self.button4 = QPushButton("End Editing", self)
+        self.cb1 = QComboBox(self)
+        self.cb2 = QComboBox(self)
         self.initUI()
 
     def initUI(self):
@@ -26,50 +30,82 @@ class App(QWidget):
         self.set_buttons()
         self.table.close()
         self.choose_table()
-        self.table.itemChanged.connect(self.updating)
 
     def set_labels(self):
         self.label1.move(14, 14)
         self.label1.setText("Choose table: ")
+        self.label2.move(150, 14)
+        self.label2.setText("Order by: ")
 
     def set_buttons(self):
-        self.button1.move(150, 8)
+        self.button1.move(300, 8)
         self.button1.clicked.connect(self.show_table)
         self.button2.move(10, 350)
         self.button2.clicked.connect(self.deleting)
+        self.button3.move(100, 350)
+        self.button3.clicked.connect(self.start_updating)
+        self.button4.move(200, 350)
+        self.button4.clicked.connect(self.stop_updating)
+
+    def start_updating(self):
+        self.table.itemChanged.connect(self.updating)
+
+    def stop_updating(self):
+        self.table.itemChanged.connect(self.updating)
+        #powinno być zatrzymanie funkcji aktualizującej dane
 
     def choose_table(self):
-        self.cb.move(90, 10)
-        self.cb.addItems(["city", "client", "flat", "rent"])
+        self.cb1.move(90, 10)
+        self.cb2.move(210, 10)
+        self.cb1.addItems(["city", "client", "flat", "rent"])
+
+        self.cb1.currentIndexChanged.connect(self.update_cb2)
+
+    def update_cb2(self):
+        ok = self.db.open()
+        if self.cb1.currentText() == "city":
+            columns = ["id_city", "name", "zip_code"]
+        if self.cb1.currentText() == "client":
+            columns = ["id_client", "nickname", "name", "surname", "id_number", "card_number"]
+        if self.cb1.currentText() == "flat":
+            columns = ["id_flat", "availability", "start_date", "end_date", "price", "number_of_rooms",
+                       "amount_of_people", "animals", "childs", "parking_space", "id_city"]
+        if self.cb1.currentText() == "rent":
+            columns = ["id_rent", "id_flat", "id_client", "start_date", "end_date"]
+
+        self.cb2.clear()
+        self.cb2.addItems(columns)
+
 
     def show_table(self):
         self.table.move(10, 40)
         self.table.resize(800, 300)
+
         ok = self.db.open()
         if not ok:
             QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
             return False
         else:
             x = 0
-            question = "SELECT * FROM " + self.cb.currentText()
+            question = "SELECT * FROM " + self.cb1.currentText() + " ORDER BY " + self.cb2.currentText()
             self.table.setRowCount(0)
 
-            if self.cb.currentText() == "city":
+            if self.cb1.currentText() == "city":
                 self.table.setColumnCount(3)
                 x = 3
                 self.table.setHorizontalHeaderLabels(["ID_CITY", "NAME", "ZIP_CODE"])
-            if self.cb.currentText() == "client":
+            if self.cb1.currentText() == "client":
                 self.table.setColumnCount(6)
                 x = 6
                 self.table.setHorizontalHeaderLabels(
                     ["ID_CLIENT", "NICKNAME", "NAME", "SURNAME", "ID_NUMBER", "CARD_NUMBER"])
-            if self.cb.currentText() == "flat":
+            if self.cb1.currentText() == "flat":
                 self.table.setColumnCount(11)
                 x = 11
                 self.table.setHorizontalHeaderLabels(["ID_FLAT", "AVAILABILITY", "START_DATE", "END_DATE", "PRICE",
                                                       "NUMBER_OF_ROOMS", "AMOUNT_OF_PEOPLE", "ANIMALS", "CHILDS",
                                                       "PARKING_SPACE", "ID_CITY"])
-            if self.cb.currentText() == "rent":
+            if self.cb1.currentText() == "rent":
                 self.table.setColumnCount(5)
                 x = 5
                 self.table.setHorizontalHeaderLabels(["ID_RENT", "ID_FLAT", "ID_CLIENT", "START_DATE", "END_DATE"])
@@ -125,18 +161,18 @@ class App(QWidget):
             id = self.table.item(row, 0).text()
             value = self.table.currentItem().text()
 
-            if self.cb.currentText() == "city":
+            if self.cb1.currentText() == "city":
                 columns = ["id_city", "name", "zip_code"]
-            if self.cb.currentText() == "client":
+            if self.cb1.currentText() == "client":
                 columns = ["id_client", "nickname", "name", "surname", "id_number", "card_number"]
-            if self.cb.currentText() == "flat":
+            if self.cb1.currentText() == "flat":
                 columns = ["id_flat", "availability", "start_date", "end_date", "price", "number_of_rooms",
                            "amount_of_people", "animals", "childs", "parking_space", "id_city"]
-            if self.cb.currentText() == "rent":
+            if self.cb1.currentText() == "rent":
                 columns = ["id_rent", "id_flat", "id_client", "start_date", "end_date"]
 
             query = QSqlQuery()
-            question = "UPDATE " + self.cb.currentText() + " SET " + columns[column] + " = '" + value +"' WHERE " + columns[0] + " = " + id
+            question = "UPDATE " + self.cb1.currentText() + " SET " + columns[column] + " = '" + value +"' WHERE " + columns[0] + " = " + id
             print(question)
             query.prepare(question)
             ok = query.exec_()
@@ -144,6 +180,8 @@ class App(QWidget):
                 QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
         self.db.commit()
         self.db.close()
+        column = -1
+        row = -1
         return True
 
     def deleting(self):
@@ -155,13 +193,13 @@ class App(QWidget):
             rows = self.table.selectionModel().selectedRows()
             index = []
 
-            if self.cb.currentText() == "city":
+            if self.cb1.currentText() == "city":
                 column = "id_city"
-            if self.cb.currentText() == "client":
+            if self.cb1.currentText() == "client":
                 column = "id_client"
-            if self.cb.currentText() == "flat":
+            if self.cb1.currentText() == "flat":
                 column = "id_flat"
-            if self.cb.currentText() == "rent":
+            if self.cb1.currentText() == "rent":
                 column = "id_rent"
 
             for i in rows:
@@ -171,13 +209,14 @@ class App(QWidget):
             for i in index:
                 id = self.table.item(i, 0).text()
                 self.table.removeRow(i)
-                question = "DELETE FROM " + self.cb.currentText() + " WHERE " + column + " = " + id
+                question = "DELETE FROM " + self.cb1.currentText() + " WHERE " + column + " = " + id
                 print(question)
                 query = QSqlQuery()
                 query.prepare(question)
                 ok = query.exec_()
                 if not ok:
                     QMessageBox.warning(self, "Error", self.db.lastError().text(), QMessageBox.Discard)
+        self.db.commit()
         self.db.close()
         return True
 

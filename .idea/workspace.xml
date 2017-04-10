@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a6380a6a-af16-4d5e-a4ae-38edeeb1d049" name="Default" comment="Utworzenie projektu">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Admin_panel.py" afterPath="$PROJECT_DIR$/Admin_panel.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataBase/create_database.py" afterPath="$PROJECT_DIR$/DataBase/create_database.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/User_panel.py" afterPath="$PROJECT_DIR$/User_panel.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DataBase/database.db" afterPath="$PROJECT_DIR$/DataBase/database.db" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,8 +24,8 @@
           <file leaf-file-name="Admin_panel.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/Admin_panel.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-737">
-                  <caret line="126" column="0" lean-forward="true" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+                <state relative-caret-position="180">
+                  <caret line="9" column="39" lean-forward="true" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
                   <folding>
                     <element signature="e#91#101#0" expanded="true" />
                   </folding>
@@ -50,8 +50,8 @@
           <file leaf-file-name="User_panel.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/User_panel.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="703">
-                  <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+                <state relative-caret-position="423">
+                  <caret line="57" column="8" lean-forward="true" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="37" />
                   <folding>
                     <element signature="e#100#110#0" expanded="true" />
                   </folding>
@@ -88,8 +88,8 @@
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/a.py" />
         <option value="$PROJECT_DIR$/DataBase/create_database.py" />
-        <option value="$PROJECT_DIR$/Admin_panel.py" />
         <option value="$PROJECT_DIR$/User_panel.py" />
+        <option value="$PROJECT_DIR$/Admin_panel.py" />
       </list>
     </option>
   </component>
@@ -168,7 +168,7 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager" selected="Python.User_panel">
+  <component name="RunManager" selected="Python.Admin_panel">
     <configuration default="false" name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -410,8 +410,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.User_panel" />
-        <item index="1" class="java.lang.String" itemvalue="Python.Admin_panel" />
+        <item index="0" class="java.lang.String" itemvalue="Python.Admin_panel" />
+        <item index="1" class="java.lang.String" itemvalue="Python.User_panel" />
         <item index="2" class="java.lang.String" itemvalue="Python.a" />
         <item index="3" class="java.lang.String" itemvalue="Python.create_database" />
         <item index="4" class="java.lang.String" itemvalue="Python.main" />
@@ -561,8 +561,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/User_panel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="703">
-          <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        <state relative-caret-position="423">
+          <caret line="57" column="8" lean-forward="true" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="37" />
           <folding>
             <element signature="e#100#110#0" expanded="true" />
           </folding>
@@ -571,8 +571,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Admin_panel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-737">
-          <caret line="126" column="0" lean-forward="true" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+        <state relative-caret-position="180">
+          <caret line="9" column="39" lean-forward="true" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
           <folding>
             <element signature="e#91#101#0" expanded="true" />
           </folding>
